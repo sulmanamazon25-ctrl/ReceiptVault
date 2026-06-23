@@ -7,16 +7,18 @@ Set-Location (Join-Path $PSScriptRoot "..")
 
 gh auth status | Out-Null
 
+$Branch = git branch --show-current
+
 if (-not (git remote get-url origin 2>$null)) {
     gh repo create $Repo --public --source=. --remote=origin --description "ReceiptVault — offline encrypted receipt scanner for Android"
-    git push -u origin main
+    git push -u origin $Branch
 } else {
-    git push -u origin main
+    git push -u origin $Branch
 }
 
 gh api --method PUT "/repos/$Owner/$Repo/pages" `
     -f build_type=legacy `
-    -f "source[branch]=main" `
+    -f "source[branch]=$Branch" `
     -f "source[path]=/docs"
 
 Write-Host ""
