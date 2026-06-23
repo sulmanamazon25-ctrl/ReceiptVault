@@ -1,0 +1,36 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Receipt body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M37,25 Q37,22 40,22 H68 Q71,22 71,25 V76 l-3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 V25 Z" />
+
+    <!-- Receipt text lines -->
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M43,33 H65 V37 H43 Z M43,43 H65 V47 H43 Z M43,53 H59 V57 H43 Z" />
+
+    <!-- Security badge -->
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M57,72 a15,15 0 1 0 30,0 a15,15 0 1 0 -30,0 Z" />
+
+    <!-- Padlock shackle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M67.5,73 v-3 a4.5,4.5 0 0 1 9,0 v3 h-2.5 v-3 a2,2 0 0 0 -4,0 v3 Z" />
+
+    <!-- Padlock body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M66,73 H78 a2,2 0 0 1 2,2 v8 a2,2 0 0 1 -2,2 H66 a2,2 0 0 1 -2,-2 v-8 a2,2 0 0 1 2,-2 Z" />
+
+    <!-- Keyhole -->
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M70,78 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0 Z M71,79 H73 V83 H71 Z" />
+</vector>

@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Single-color silhouette for themed icons; the system applies the tint. -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M37,25 Q37,22 40,22 H68 Q71,22 71,25 V76 l-3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 -3.4,4 -3.4,-4 V25 Z" />
+    <path
+        android:fillColor="#000000"
+        android:pathData="M57,72 a15,15 0 1 0 30,0 a15,15 0 1 0 -30,0 Z" />
+</vector>
