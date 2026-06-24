@@ -13,3 +13,5 @@ release.keystore
 *.jks
 keystore.properties
 gradle-temp/
+gh-auth-log.txt
+publish-log.txt

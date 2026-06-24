@@ -24,8 +24,8 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://sulmanamazon25-ctrl.github.io/ReceiptVault/privacy.html\"")
-        buildConfigField("String", "TERMS_URL", "\"https://sulmanamazon25-ctrl.github.io/ReceiptVault/terms.html\"")
+        buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/privacy.html\"")
+        buildConfigField("String", "TERMS_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/terms.html\"")
         buildConfigField("String", "SUPPORT_EMAIL", "\"support@receiptvault.app\"")
     }
 

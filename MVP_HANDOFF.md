@@ -8,19 +8,31 @@ Copy to your Android phone and install (enable **Install unknown apps**):
 E:\scanoff\app\build\outputs\apk\release\app-release.apk
 ```
 
+## Legal pages (done — Supabase Storage)
+
+- Privacy: https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/privacy.html
+- Terms: https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/terms.html
+
+Re-publish after edits: `.\scripts\publish-legal-supabase.ps1`
+
 ## GitHub (one-time — requires your login)
+
+A device login may already be waiting. If not:
 
 ```powershell
 cd E:\scanoff
 gh auth login
-.\scripts\publish-github.ps1
+.\scripts\finalize-mvp.ps1
 ```
+
+Or just push: `.\scripts\publish-github.ps1`
 
 This creates **https://github.com/sulmanamazon25-ctrl/ReceiptVault**, pushes code, and enables Pages at:
 
 **https://sulmanamazon25-ctrl.github.io/ReceiptVault/**
 
-Optional CI signing secrets: see `DEPLOYMENT.md` (`scripts\encode-keystore.ps1` for base64).
+Optional CI signing secrets: see `DEPLOYMENT.md` (`scripts\encode-keystore.ps1` for base64).  
+`finalize-mvp.ps1` sets secrets automatically when `release.keystore` exists and `gh` is authenticated.
 
 ## Supabase (done)
 
