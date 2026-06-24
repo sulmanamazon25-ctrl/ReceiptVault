@@ -47,7 +47,7 @@ Other Supabase projects were not modified.
 
 ## Local git
 
-- Commit: `119fc9b` on branch `master`
+- Latest commit: `86545ca` on branch `master`
 - Keystore (backup offline): `E:\scanoff\release.keystore` (gitignored)
 
 ## Test on phone
