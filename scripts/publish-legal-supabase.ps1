@@ -7,10 +7,11 @@ $migration = Join-Path $PSScriptRoot "..\supabase\migrations\20260624130000_lega
 & supabase db query --linked -f $migration 2>&1 | Out-Host
 
 Write-Host "Uploading legal pages (--experimental required for storage cp)..."
-$docs = (Join-Path $PSScriptRoot "..\docs") -replace '\\', '/'
-& supabase storage cp --experimental "$docs/privacy.html" "ss:///legal/privacy.html" --linked --content-type "text/html" 2>&1 | Out-Host
-& supabase storage cp --experimental "$docs/terms.html" "ss:///legal/terms.html" --linked --content-type "text/html" 2>&1 | Out-Host
-& supabase storage cp --experimental "$docs/index.html" "ss:///legal/index.html" --linked --content-type "text/html" 2>&1 | Out-Host
+$docs = (Resolve-Path (Join-Path $PSScriptRoot "..\docs")).Path
+foreach ($name in @("privacy.html", "terms.html", "index.html")) {
+    $file = Join-Path $docs $name
+    & supabase storage cp --experimental $file "ss:///legal/$name" --linked --content-type "text/html" 2>&1 | Out-Host
+}
 
 Write-Host ""
 Write-Host "=== Legal pages live ===" -ForegroundColor Green

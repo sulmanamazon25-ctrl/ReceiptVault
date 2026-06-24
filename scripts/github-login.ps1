@@ -40,8 +40,8 @@ $null = gh auth status 2>&1
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""
     Write-Host "GitHub login successful!" -ForegroundColor Green
-    Write-Host "Running finalize (push repo + CI secrets)..." -ForegroundColor Cyan
-    & (Join-Path $PSScriptRoot "finalize-mvp.ps1")
+    Write-Host "Running publish..." -ForegroundColor Cyan
+    & (Join-Path $PSScriptRoot "publish-final.ps1")
 } else {
     Write-Host ""
     Write-Host "Login did not complete. Run this script again:" -ForegroundColor Red
