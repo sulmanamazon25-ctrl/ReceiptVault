@@ -48,7 +48,8 @@ Other Supabase projects were not modified.
 
 ## Local git
 
-- Latest commit: `86545ca` on branch `master`
+- Latest commit: `e41158c` on branch `master`
+- Remote: https://github.com/sulmanamazon25-ctrl/ReceiptVault
 - Keystore (backup offline): `E:\scanoff\release.keystore` (gitignored)
 
 ## Test on phone
