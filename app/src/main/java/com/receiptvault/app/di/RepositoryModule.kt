@@ -1,9 +1,11 @@
 package com.receiptvault.app.di
 
 import com.receiptvault.app.data.repository.FolderRepositoryImpl
+import com.receiptvault.app.data.repository.LicenseRepositoryImpl
 import com.receiptvault.app.data.repository.ReceiptRepositoryImpl
 import com.receiptvault.app.data.repository.SubscriptionRepositoryImpl
 import com.receiptvault.app.domain.repository.FolderRepository
+import com.receiptvault.app.domain.repository.LicenseRepository
 import com.receiptvault.app.domain.repository.ReceiptRepository
 import com.receiptvault.app.domain.repository.SubscriptionRepository
 import dagger.Binds
@@ -28,4 +30,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSubscriptionRepository(impl: SubscriptionRepositoryImpl): SubscriptionRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLicenseRepository(impl: LicenseRepositoryImpl): LicenseRepository
 }

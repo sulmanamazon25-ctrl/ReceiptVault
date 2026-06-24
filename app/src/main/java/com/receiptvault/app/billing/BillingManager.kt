@@ -15,6 +15,7 @@ import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.QueryPurchasesParams
 import com.receiptvault.app.di.ApplicationScope
 import com.receiptvault.app.di.IoDispatcher
+import com.receiptvault.app.domain.model.EntitlementSource
 import com.receiptvault.app.domain.model.PurchaseType
 import com.receiptvault.app.domain.model.Subscription
 import com.receiptvault.app.domain.repository.SubscriptionRepository
@@ -147,29 +148,38 @@ class BillingManager @Inject constructor(
     fun refreshPurchases() {
         if (!billingClient.isReady) return
 
+        val collected = mutableListOf<Purchase>()
+
         billingClient.queryPurchasesAsync(
             QueryPurchasesParams.newBuilder()
                 .setProductType(BillingClient.ProductType.SUBS)
                 .build()
         ) { subsResult, subsPurchases ->
             if (subsResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                collected.addAll(subsPurchases)
+            }
+            billingClient.queryPurchasesAsync(
+                QueryPurchasesParams.newBuilder()
+                    .setProductType(BillingClient.ProductType.INAPP)
+                    .build()
+            ) { inAppResult, inAppPurchases ->
+                if (inAppResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    collected.addAll(inAppPurchases)
+                }
                 applicationScope.launch(ioDispatcher) {
-                    subsPurchases.forEach { handlePurchase(it) }
+                    syncPurchases(collected)
                 }
             }
         }
+    }
 
-        billingClient.queryPurchasesAsync(
-            QueryPurchasesParams.newBuilder()
-                .setProductType(BillingClient.ProductType.INAPP)
-                .build()
-        ) { inAppResult, inAppPurchases ->
-            if (inAppResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                applicationScope.launch(ioDispatcher) {
-                    inAppPurchases.forEach { handlePurchase(it) }
-                }
-            }
+    private suspend fun syncPurchases(purchases: List<Purchase>) {
+        val active = purchases.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED }
+        if (active.isEmpty()) {
+            subscriptionRepository.clearSubscription()
+            return
         }
+        active.forEach { handlePurchase(it) }
     }
 
     override fun onPurchasesUpdated(result: BillingResult, purchases: MutableList<Purchase>?) {
@@ -205,10 +215,19 @@ class BillingManager @Inject constructor(
                 purchaseId = purchase.purchaseToken,
                 purchaseType = purchaseType,
                 purchaseDate = purchase.purchaseTime,
-                expiryDate = if (purchaseType == PurchaseType.LIFETIME) null else null
+                expiryDate = computeExpiry(purchaseType, purchase.purchaseTime),
+                source = EntitlementSource.PLAY
             )
         )
     }
+
+    private fun computeExpiry(purchaseType: PurchaseType, purchaseTime: Long): Long? =
+        when (purchaseType) {
+            PurchaseType.LIFETIME -> null
+            PurchaseType.MONTHLY -> purchaseTime + 31L * 24 * 60 * 60 * 1000
+            PurchaseType.YEARLY -> purchaseTime + 366L * 24 * 60 * 60 * 1000
+            PurchaseType.NONE -> null
+        }
 }
 
 enum class BillingConnectionState {

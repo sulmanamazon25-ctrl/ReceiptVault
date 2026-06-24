@@ -31,6 +31,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -59,10 +60,13 @@ import com.receiptvault.app.presentation.viewmodel.AddEditReceiptViewModel
 @Composable
 fun AddEditReceiptScreen(
     onNavigateBack: () -> Unit,
+    onOpenSubscription: () -> Unit = {},
     viewModel: AddEditReceiptViewModel = hiltViewModel()
 ) {
     val state = viewModel.uiState
     val folders by viewModel.folders.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val ocrMessage = viewModel.ocrMessage
     val context = LocalContext.current
 
     val takePictureLauncher = rememberLauncherForActivityResult(
@@ -140,6 +144,17 @@ fun AddEditReceiptScreen(
                 }
                 TextButton(onClick = { viewModel.removeImage() }) {
                     Text("Remove photo")
+                }
+                OutlinedButton(
+                    onClick = {
+                        viewModel.scanReceipt(isPro) { onOpenSubscription() }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (isPro) "Scan receipt (Pro)" else "Scan receipt — Pro required")
+                }
+                ocrMessage?.let {
+                    Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                 }
             } else {
                 OutlinedButton(

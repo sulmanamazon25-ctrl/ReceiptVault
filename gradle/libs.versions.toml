@@ -30,6 +30,7 @@ sqlcipher = "4.9.0"
 
 # Async
 coroutines = "1.9.0"
+coroutinesPlayServices = "1.9.0"
 
 # Background work / paging
 workManager = "2.10.0"
@@ -40,6 +41,15 @@ biometric = "1.1.0"
 
 # Google Play Billing
 billing = "7.1.1"
+
+# Networking / licensing
+okhttp = "4.12.0"
+
+# ML Kit OCR
+mlkitTextRecognition = "16.0.1"
+
+# Encrypted preferences (license cache)
+securityCrypto = "1.1.0-alpha06"
 
 # Material components (provides the Material 3 XML theme parent)
 material = "1.12.0"
@@ -93,6 +103,7 @@ androidx-sqlite = { group = "androidx.sqlite", name = "sqlite", version.ref = "s
 # Coroutines
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
 
 # WorkManager
 androidx-work-runtime-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "workManager" }
@@ -106,6 +117,15 @@ androidx-biometric = { group = "androidx.biometric", name = "biometric", version
 
 # Google Play Billing
 billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
+
+# Networking
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+
+# ML Kit
+mlkit-text-recognition = { group = "com.google.mlkit", name = "text-recognition", version.ref = "mlkitTextRecognition" }
+
+# Security crypto
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 
 # Material components (XML theme parent)
 google-android-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
@@ -140,6 +160,7 @@ room = [
 coroutines = [
     "kotlinx-coroutines-core",
     "kotlinx-coroutines-android",
+    "kotlinx-coroutines-play-services",
 ]
 
 [plugins]

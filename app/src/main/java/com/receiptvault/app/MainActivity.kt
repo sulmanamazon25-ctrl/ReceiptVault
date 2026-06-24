@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.receiptvault.app.data.preferences.SettingsRepository
+import com.receiptvault.app.domain.repository.LicenseRepository
 import com.receiptvault.app.presentation.lock.LockScreen
 import com.receiptvault.app.presentation.navigation.AppNavHost
 import com.receiptvault.app.presentation.theme.ReceiptVaultTheme
@@ -23,6 +24,8 @@ import com.receiptvault.app.security.BiometricAuthenticator
 import com.receiptvault.app.security.BiometricStatus
 import com.receiptvault.app.security.applyScreenshotProtection
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
 import javax.inject.Inject
 
 /**
@@ -39,8 +42,16 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var settingsRepository: SettingsRepository
 
+    @Inject
+    lateinit var licenseRepository: LicenseRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            if (licenseRepository.getLicense() != null) {
+                licenseRepository.validateOnline()
+            }
+        }
         enableEdgeToEdge()
         setContent {
             val dynamicColor by settingsRepository.dynamicColorEnabled.collectAsStateWithLifecycle()

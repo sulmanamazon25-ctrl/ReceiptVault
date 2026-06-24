@@ -1,14 +1,19 @@
 package com.receiptvault.app.presentation.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.receiptvault.app.domain.model.Receipt
 import com.receiptvault.app.domain.repository.ReceiptRepository
+import com.receiptvault.app.domain.repository.SubscriptionRepository
+import com.receiptvault.app.pdf.ReceiptPdfExporter
 import com.receiptvault.app.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,19 +21,49 @@ import javax.inject.Inject
 @HiltViewModel
 class ReceiptDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val receiptRepository: ReceiptRepository
+    private val receiptRepository: ReceiptRepository,
+    private val pdfExporter: ReceiptPdfExporter,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
     private val receiptId: Long =
-        savedStateHandle.get<Long>(Screen.ReceiptDetail.ARG_RECEIPT_ID) ?: 0L
+        checkNotNull(savedStateHandle.get<Long>(Screen.ReceiptDetail.ARG_RECEIPT_ID))
 
-    val receipt: StateFlow<Receipt?> = receiptRepository.observeReceipt(receiptId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
+    private val _receipt = MutableStateFlow<Receipt?>(null)
+    val receipt: StateFlow<Receipt?> = _receipt.asStateFlow()
+
+    val isPro: StateFlow<Boolean> = subscriptionRepository.observeIsPro()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
+
+    private val _pdfUri = MutableStateFlow<Uri?>(null)
+    val pdfUri: StateFlow<Uri?> = _pdfUri.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _receipt.value = receiptRepository.getReceipt(receiptId)
+        }
+    }
 
     fun delete(onDeleted: () -> Unit) {
         viewModelScope.launch {
-            receiptRepository.deleteReceiptById(receiptId)
+            receiptRepository.getReceipt(receiptId)?.let { receiptRepository.deleteReceipt(it) }
             onDeleted()
         }
+    }
+
+    fun exportPdf(isPro: Boolean, onNeedPro: () -> Unit) {
+        val receipt = _receipt.value ?: return
+        if (!isPro) {
+            onNeedPro()
+            return
+        }
+        viewModelScope.launch {
+            pdfExporter.exportReceipt(receipt)
+                .onSuccess { _pdfUri.value = it }
+        }
+    }
+
+    fun clearPdfUri() {
+        _pdfUri.value = null
     }
 }

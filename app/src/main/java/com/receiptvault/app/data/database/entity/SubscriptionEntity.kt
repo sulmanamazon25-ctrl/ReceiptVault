@@ -9,5 +9,6 @@ data class SubscriptionEntity(
     @PrimaryKey val purchaseId: String,
     val purchaseType: String,
     val purchaseDate: Long,
-    val expiryDate: Long?
+    val expiryDate: Long?,
+    val source: String = "PLAY"
 )

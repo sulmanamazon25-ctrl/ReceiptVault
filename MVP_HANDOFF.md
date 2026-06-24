@@ -1,12 +1,26 @@
-# ReceiptVault MVP — Final handoff (2026-06-24)
+# ReceiptVault v2.0 — Handoff (2026-06-24)
 
 ## Install the app now
-
-Copy to your Android phone and install (enable **Install unknown apps**):
 
 ```
 E:\scanoff\app\build\outputs\apk\release\app-release.apk
 ```
+
+Version **2.0.0** — Pro features: OCR, PDF export, encrypted backup, license keys + Play Billing.
+
+## Admin license key
+
+```powershell
+cd E:\scanoff
+.\scripts\generate-license.ps1 -Tier lifetime -MaxDevices 1 -Note "Admin phone"
+```
+
+See [ADMIN_GUIDE.md](ADMIN_GUIDE.md) and [USER_GUIDE.md](USER_GUIDE.md).
+
+## GitHub
+
+Repo: https://github.com/sulmanamazon25-ctrl/ReceiptVault  
+CI: https://github.com/sulmanamazon25-ctrl/ReceiptVault/actions
 
 ## Legal pages (done — Supabase Storage)
 

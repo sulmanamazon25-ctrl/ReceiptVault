@@ -24,8 +24,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import android.content.Intent
+import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -45,18 +50,40 @@ fun HomeScreen(
     onOpenFolders: () -> Unit,
     onOpenSearch: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenSubscription: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val receipts by viewModel.receipts.collectAsStateWithLifecycle()
     val folders by viewModel.folders.collectAsStateWithLifecycle()
     val selectedFolderId by viewModel.selectedFolderId.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val reportUri by viewModel.reportUri.collectAsStateWithLifecycle()
     val total = receipts.sumOf { it.amount ?: 0.0 }
+
+    LaunchedEffect(reportUri) {
+        reportUri?.let { uri ->
+            context.startActivity(
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "application/pdf"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+            viewModel.clearReportUri()
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("ReceiptVault") },
                 actions = {
+                    IconButton(onClick = {
+                        viewModel.exportReport(isPro) { onOpenSubscription() }
+                    }) {
+                        Icon(Icons.Filled.PictureAsPdf, contentDescription = "Export report PDF")
+                    }
                     IconButton(onClick = onOpenSearch) {
                         Icon(Icons.Filled.Search, contentDescription = "Search")
                     }

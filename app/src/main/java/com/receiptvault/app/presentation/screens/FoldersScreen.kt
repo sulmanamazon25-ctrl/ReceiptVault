@@ -42,10 +42,13 @@ import com.receiptvault.app.presentation.viewmodel.FoldersViewModel
 @Composable
 fun FoldersScreen(
     onNavigateBack: () -> Unit,
+    onOpenSubscription: () -> Unit = {},
     viewModel: FoldersViewModel = hiltViewModel()
 ) {
     val folders by viewModel.folders.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
     var showCreateDialog by remember { mutableStateOf(false) }
+    var showLimitDialog by remember { mutableStateOf(false) }
     var newFolderName by remember { mutableStateOf("") }
 
     Scaffold(
@@ -61,8 +64,12 @@ fun FoldersScreen(
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                newFolderName = ""
-                showCreateDialog = true
+                if (viewModel.canCreateFolder(isPro, folders.size)) {
+                    newFolderName = ""
+                    showCreateDialog = true
+                } else {
+                    showLimitDialog = true
+                }
             }) {
                 Icon(Icons.Filled.Add, contentDescription = "New folder")
             }
@@ -120,7 +127,7 @@ fun FoldersScreen(
             confirmButton = {
                 TextButton(
                     onClick = {
-                        viewModel.createFolder(newFolderName)
+                        viewModel.createFolder(newFolderName, isPro) { showLimitDialog = true }
                         showCreateDialog = false
                     },
                     enabled = newFolderName.isNotBlank()
@@ -130,6 +137,23 @@ fun FoldersScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showCreateDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showLimitDialog) {
+        AlertDialog(
+            onDismissRequest = { showLimitDialog = false },
+            title = { Text("Folder limit reached") },
+            text = { Text("Free accounts support up to 5 folders. Upgrade to Pro for unlimited folders.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLimitDialog = false
+                    onOpenSubscription()
+                }) { Text("Upgrade") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLimitDialog = false }) { Text("Cancel") }
             }
         )
     }

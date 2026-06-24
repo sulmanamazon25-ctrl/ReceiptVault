@@ -3,7 +3,12 @@ package com.receiptvault.app
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.receiptvault.app.worker.LicenseCheckWorker
 import dagger.hilt.android.HiltAndroidApp
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -24,6 +29,12 @@ class ReceiptVaultApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         System.loadLibrary("sqlcipher")
+        val request = PeriodicWorkRequestBuilder<LicenseCheckWorker>(7, TimeUnit.DAYS).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "license_check",
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )
     }
 
     override val workManagerConfiguration: Configuration

@@ -2,8 +2,10 @@ package com.receiptvault.app.di
 
 import android.content.Context
 import androidx.room.Room
+import com.receiptvault.app.data.database.DatabaseMigrations
 import com.receiptvault.app.data.database.ReceiptVaultDatabase
 import com.receiptvault.app.data.database.dao.FolderDao
+import com.receiptvault.app.data.database.dao.LicenseCacheDao
 import com.receiptvault.app.data.database.dao.ReceiptDao
 import com.receiptvault.app.data.database.dao.SubscriptionDao
 import com.receiptvault.app.security.DatabaseKeyProvider
@@ -38,6 +40,7 @@ object DatabaseModule {
             ReceiptVaultDatabase.DATABASE_NAME
         )
             .openHelperFactory(factory)
+            .addMigrations(DatabaseMigrations.MIGRATION_1_2)
             .build()
     }
 
@@ -50,4 +53,8 @@ object DatabaseModule {
     @Provides
     fun provideSubscriptionDao(database: ReceiptVaultDatabase): SubscriptionDao =
         database.subscriptionDao()
+
+    @Provides
+    fun provideLicenseCacheDao(database: ReceiptVaultDatabase): LicenseCacheDao =
+        database.licenseCacheDao()
 }

@@ -22,7 +22,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import android.content.Intent
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,10 +47,27 @@ import com.receiptvault.app.presentation.viewmodel.ReceiptDetailViewModel
 fun ReceiptDetailScreen(
     onNavigateBack: () -> Unit,
     onEdit: (Long) -> Unit,
+    onOpenSubscription: () -> Unit = {},
     viewModel: ReceiptDetailViewModel = hiltViewModel()
 ) {
     val receipt by viewModel.receipt.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val pdfUri by viewModel.pdfUri.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     var showDeleteDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(pdfUri) {
+        pdfUri?.let { uri ->
+            context.startActivity(
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "application/pdf"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+            viewModel.clearPdfUri()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -127,6 +148,13 @@ fun ReceiptDetailScreen(
                 DetailField(label = "Date", value = Formatters.formatDate(current.date))
                 DetailField(label = "Category", value = current.category)
                 DetailField(label = "Notes", value = current.notes)
+
+                OutlinedButton(
+                    onClick = { viewModel.exportPdf(isPro) { onOpenSubscription() } },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (isPro) "Export PDF" else "Export PDF — Pro required")
+                }
             }
         }
     }

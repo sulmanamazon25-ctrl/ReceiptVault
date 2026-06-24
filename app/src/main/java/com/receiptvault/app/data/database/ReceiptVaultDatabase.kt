@@ -3,9 +3,11 @@ package com.receiptvault.app.data.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.receiptvault.app.data.database.dao.FolderDao
+import com.receiptvault.app.data.database.dao.LicenseCacheDao
 import com.receiptvault.app.data.database.dao.ReceiptDao
 import com.receiptvault.app.data.database.dao.SubscriptionDao
 import com.receiptvault.app.data.database.entity.FolderEntity
+import com.receiptvault.app.data.database.entity.LicenseCacheEntity
 import com.receiptvault.app.data.database.entity.ReceiptEntity
 import com.receiptvault.app.data.database.entity.SubscriptionEntity
 
@@ -17,9 +19,10 @@ import com.receiptvault.app.data.database.entity.SubscriptionEntity
     entities = [
         ReceiptEntity::class,
         FolderEntity::class,
-        SubscriptionEntity::class
+        SubscriptionEntity::class,
+        LicenseCacheEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class ReceiptVaultDatabase : RoomDatabase() {
@@ -29,6 +32,8 @@ abstract class ReceiptVaultDatabase : RoomDatabase() {
     abstract fun folderDao(): FolderDao
 
     abstract fun subscriptionDao(): SubscriptionDao
+
+    abstract fun licenseCacheDao(): LicenseCacheDao
 
     companion object {
         const val DATABASE_NAME = "receiptvault.db"

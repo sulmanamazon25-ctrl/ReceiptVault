@@ -24,8 +24,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +56,33 @@ fun SettingsScreen(
     val appLock by viewModel.appLockEnabled.collectAsStateWithLifecycle()
     val screenshotProtection by viewModel.screenshotProtectionEnabled.collectAsStateWithLifecycle()
     val dynamicColor by viewModel.dynamicColorEnabled.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val backupMessage by viewModel.backupMessage.collectAsStateWithLifecycle()
+    val exportUri by viewModel.exportUri.collectAsStateWithLifecycle()
+    var showExportDialog by remember { mutableStateOf(false) }
+    var showRestoreDialog by remember { mutableStateOf(false) }
+    var passphrase by remember { mutableStateOf("") }
+
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null && passphrase.isNotBlank()) {
+            viewModel.importBackup(uri, passphrase) { }
+        }
+    }
+
+    LaunchedEffect(exportUri) {
+        exportUri?.let { uri ->
+            context.startActivity(
+                Intent(Intent.ACTION_SEND).apply {
+                    type = "application/octet-stream"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            )
+            viewModel.clearBackupMessage()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -103,9 +139,36 @@ fun SettingsScreen(
 
             NavigationRow(
                 title = "ReceiptVault Pro",
-                subtitle = "See what's coming to premium",
+                subtitle = if (isPro) "Pro active" else "Unlock OCR, PDF, backup",
                 onClick = onOpenSubscription
             )
+
+            if (isPro) {
+                SectionHeader("Pro tools")
+                NavigationRow(
+                    title = "Export encrypted backup",
+                    subtitle = "Password-protected .rvbak file",
+                    onClick = {
+                        passphrase = ""
+                        showExportDialog = true
+                    }
+                )
+                NavigationRow(
+                    title = "Restore from backup",
+                    subtitle = "Replace local data from .rvbak",
+                    onClick = {
+                        passphrase = ""
+                        showRestoreDialog = true
+                    }
+                )
+                backupMessage?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
 
             HorizontalDivider()
             SectionHeader("Legal & support")
@@ -142,12 +205,66 @@ fun SettingsScreen(
 
             HorizontalDivider()
             Text(
-                text = "ReceiptVault 1.0.0 — fully offline. Your data never leaves this device.\n© 2026 ReceiptVault",
+                text = "ReceiptVault ${BuildConfig.VERSION_NAME} — receipts stay on-device.\n© 2026 ReceiptVault",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(16.dp)
             )
         }
+    }
+
+    if (showExportDialog) {
+        AlertDialog(
+            onDismissRequest = { showExportDialog = false },
+            title = { Text("Export backup") },
+            text = {
+                OutlinedTextField(
+                    value = passphrase,
+                    onValueChange = { passphrase = it },
+                    label = { Text("Backup passphrase") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        viewModel.exportBackup(passphrase)
+                        showExportDialog = false
+                    },
+                    enabled = passphrase.length >= 8
+                ) { Text("Export") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExportDialog = false }) { Text("Cancel") }
+            }
+        )
+    }
+
+    if (showRestoreDialog) {
+        AlertDialog(
+            onDismissRequest = { showRestoreDialog = false },
+            title = { Text("Restore backup") },
+            text = {
+                OutlinedTextField(
+                    value = passphrase,
+                    onValueChange = { passphrase = it },
+                    label = { Text("Backup passphrase") },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        restoreLauncher.launch(arrayOf("*/*"))
+                        showRestoreDialog = false
+                    },
+                    enabled = passphrase.length >= 8
+                ) { Text("Choose file") }
+            },
+            dismissButton = {
+                TextButton(onClick = { showRestoreDialog = false }) { Text("Cancel") }
+            }
+        )
     }
 }
 

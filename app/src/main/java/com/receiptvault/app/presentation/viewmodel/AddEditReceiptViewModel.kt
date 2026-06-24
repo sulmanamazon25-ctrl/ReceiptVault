@@ -12,6 +12,8 @@ import com.receiptvault.app.domain.model.Folder
 import com.receiptvault.app.domain.model.Receipt
 import com.receiptvault.app.domain.repository.FolderRepository
 import com.receiptvault.app.domain.repository.ReceiptRepository
+import com.receiptvault.app.domain.repository.SubscriptionRepository
+import com.receiptvault.app.ocr.ReceiptOcrParser
 import com.receiptvault.app.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -20,7 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/** Immutable form state for the add/edit screen. */
 data class AddEditReceiptUiState(
     val title: String = "",
     val merchantName: String = "",
@@ -41,7 +42,9 @@ class AddEditReceiptViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val receiptRepository: ReceiptRepository,
     folderRepository: FolderRepository,
-    private val imageStorage: ImageStorage
+    private val imageStorage: ImageStorage,
+    private val ocrParser: ReceiptOcrParser,
+    subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
     private val receiptId: Long =
@@ -55,6 +58,12 @@ class AddEditReceiptViewModel @Inject constructor(
 
     var uiState by mutableStateOf(AddEditReceiptUiState(isEditMode = isEditMode))
         private set
+
+    var ocrMessage by mutableStateOf<String?>(null)
+        private set
+
+    val isPro: StateFlow<Boolean> = subscriptionRepository.observeIsPro()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
     val folders: StateFlow<List<Folder>> = folderRepository.observeFolders()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
@@ -89,7 +98,6 @@ class AddEditReceiptViewModel @Inject constructor(
     fun onNotesChange(value: String) { uiState = uiState.copy(notes = value) }
     fun onFolderSelected(folderId: Long?) { uiState = uiState.copy(folderId = folderId) }
 
-    /** Creates the target file for a new capture and returns the content URI to hand the camera. */
     fun prepareImageCapture(): Uri {
         val file = imageStorage.createImageFile()
         pendingImagePath = file.absolutePath
@@ -113,6 +121,34 @@ class AddEditReceiptViewModel @Inject constructor(
     fun removeImage() {
         imageStorage.deleteImage(uiState.imagePath)
         uiState = uiState.copy(imagePath = null)
+    }
+
+    fun scanReceipt(isPro: Boolean, onNeedPro: () -> Unit) {
+        val path = uiState.imagePath ?: return
+        if (!isPro) {
+            onNeedPro()
+            return
+        }
+        viewModelScope.launch {
+            ocrParser.parse(imageStorage.uriForFile(java.io.File(path)))
+                .onSuccess { result ->
+                    uiState = uiState.copy(
+                        merchantName = result.merchantName ?: uiState.merchantName,
+                        amount = result.amount?.toString() ?: uiState.amount,
+                        title = if (uiState.title.isBlank()) {
+                            result.merchantName ?: uiState.title
+                        } else {
+                            uiState.title
+                        }
+                    )
+                    ocrMessage = if (result.rawText.isBlank()) "No text detected" else "Scan complete"
+                }
+                .onFailure { ocrMessage = it.message ?: "Scan failed" }
+        }
+    }
+
+    fun clearOcrMessage() {
+        ocrMessage = null
     }
 
     fun save(onSaved: () -> Unit) {

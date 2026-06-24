@@ -1,6 +1,6 @@
 package com.receiptvault.app.domain.model
 
-/** The tier of a purchase made through the billing flow (wired up in a later phase). */
+/** The tier of a purchase made through the billing flow or license key. */
 enum class PurchaseType {
     NONE,
     MONTHLY,
@@ -18,9 +18,13 @@ data class Subscription(
     val purchaseId: String,
     val purchaseType: PurchaseType,
     val purchaseDate: Long,
-    val expiryDate: Long?
+    val expiryDate: Long?,
+    val source: EntitlementSource = EntitlementSource.PLAY
 ) {
     val isActive: Boolean
-        get() = purchaseType == PurchaseType.LIFETIME ||
-            (expiryDate != null && expiryDate > System.currentTimeMillis())
+        get() = when (purchaseType) {
+            PurchaseType.NONE -> false
+            PurchaseType.LIFETIME -> true
+            else -> expiryDate != null && expiryDate > System.currentTimeMillis()
+        }
 }

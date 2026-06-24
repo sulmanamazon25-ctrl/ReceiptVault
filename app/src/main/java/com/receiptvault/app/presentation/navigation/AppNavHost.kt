@@ -14,12 +14,13 @@ import com.receiptvault.app.presentation.screens.SearchScreen
 import com.receiptvault.app.presentation.screens.SettingsScreen
 import com.receiptvault.app.presentation.screens.SubscriptionScreen
 
-/** The app's navigation graph. */
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     startDestination: String = Screen.Home.route
 ) {
+    val openPro = { navController.navigate(Screen.Subscription.route) }
+
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -30,7 +31,8 @@ fun AppNavHost(
                 onOpenReceipt = { id -> navController.navigate(Screen.ReceiptDetail.createRoute(id)) },
                 onOpenFolders = { navController.navigate(Screen.Folders.route) },
                 onOpenSearch = { navController.navigate(Screen.Search.route) },
-                onOpenSettings = { navController.navigate(Screen.Settings.route) }
+                onOpenSettings = { navController.navigate(Screen.Settings.route) },
+                onOpenSubscription = openPro
             )
         }
 
@@ -44,7 +46,8 @@ fun AppNavHost(
             )
         ) {
             AddEditReceiptScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onOpenSubscription = openPro
             )
         }
 
@@ -60,13 +63,15 @@ fun AppNavHost(
                 onNavigateBack = { navController.popBackStack() },
                 onEdit = { id ->
                     navController.navigate(Screen.AddEditReceipt.createRoute(id))
-                }
+                },
+                onOpenSubscription = openPro
             )
         }
 
         composable(Screen.Folders.route) {
             FoldersScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onOpenSubscription = openPro
             )
         }
 
@@ -80,7 +85,7 @@ fun AppNavHost(
         composable(Screen.Settings.route) {
             SettingsScreen(
                 onNavigateBack = { navController.popBackStack() },
-                onOpenSubscription = { navController.navigate(Screen.Subscription.route) }
+                onOpenSubscription = openPro
             )
         }
 

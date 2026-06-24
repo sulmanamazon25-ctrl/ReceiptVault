@@ -16,8 +16,15 @@ android {
         applicationId = "com.receiptvault.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "2.0.0"
+
+        buildConfigField("String", "SUPABASE_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co\"")
+        buildConfigField("String", "SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrZnlicXd0YmFlY3FmbnpjcXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNTY4NTAsImV4cCI6MjA5NzgzMjg1MH0.2s7clZwzMDL7gJhlQjVNoBu1v2zDTUVJXGqqpV8gxK4\"")
+        buildConfigField("String", "ACTIVATE_LICENSE_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/functions/v1/activate-license\"")
+        buildConfigField("String", "CHECK_LICENSE_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/functions/v1/check-license\"")
+        buildConfigField("int", "LICENSE_OFFLINE_GRACE_DAYS", "30")
+        buildConfigField("int", "FREE_TIER_MAX_FOLDERS", "5")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -124,6 +131,15 @@ dependencies {
 
     // Google Play Billing (active when installed via Play Store)
     implementation(libs.billing.ktx)
+
+    // License activation / online checks
+    implementation(libs.okhttp)
+
+    // Pro: OCR
+    implementation(libs.mlkit.text.recognition)
+
+    // License token cache
+    implementation(libs.androidx.security.crypto)
 
     // Material components (XML theme parent)
     implementation(libs.google.android.material)
