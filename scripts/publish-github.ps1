@@ -1,4 +1,4 @@
-# One-shot publish: repo + push + GitHub Pages (run after `gh auth login`)
+# One-shot publish: repo + push + GitHub Pages (run after `.\scripts\github-login.ps1`)
 $ErrorActionPreference = "Stop"
 $Owner = "sulmanamazon25-ctrl"
 $Repo = "ReceiptVault"

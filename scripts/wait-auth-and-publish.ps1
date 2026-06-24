@@ -2,7 +2,9 @@
 $ErrorActionPreference = "Continue"
 Set-Location (Join-Path $PSScriptRoot "..")
 
-Write-Host "Waiting for GitHub CLI auth (complete login at https://github.com/login/device)..." -ForegroundColor Cyan
+Write-Host "Waiting for GitHub CLI auth..." -ForegroundColor Cyan
+Write-Host "  Run .\scripts\github-login.ps1 in another window if you have not logged in yet." -ForegroundColor Yellow
+Write-Host "  The code appears in PowerShell — paste it at https://github.com/login/device" -ForegroundColor Yellow
 for ($i = 0; $i -lt 120; $i++) {
     $null = gh auth status 2>&1
     if ($LASTEXITCODE -eq 0) {
@@ -24,5 +26,5 @@ for ($i = 0; $i -lt 120; $i++) {
     if ($i % 6 -eq 0) { Write-Host "  still waiting... ($($i * 5)s)" }
     Start-Sleep -Seconds 5
 }
-Write-Host "Timed out waiting for gh auth. Run: gh auth login" -ForegroundColor Red
+Write-Host "Timed out waiting for gh auth. Run: .\scripts\github-login.ps1" -ForegroundColor Red
 exit 1

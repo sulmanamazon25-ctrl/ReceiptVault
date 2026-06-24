@@ -21,7 +21,7 @@ if ($LASTEXITCODE -eq 0) {
 } else {
     Write-Host ""
     Write-Host "GitHub not authenticated — skipping repo push." -ForegroundColor Yellow
-    Write-Host "Run: gh auth login  then  .\scripts\publish-github.ps1"
+    Write-Host "Run: .\scripts\github-login.ps1"
 }
 
 Write-Host ""

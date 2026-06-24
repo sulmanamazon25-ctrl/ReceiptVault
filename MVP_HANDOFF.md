@@ -17,22 +17,23 @@ Re-publish after edits: `.\scripts\publish-legal-supabase.ps1`
 
 ## GitHub (one-time — requires your login)
 
-A device login may already be waiting. If not:
+**The code appears in PowerShell, not in the browser.**
+
+Run this one script — it opens the browser, shows the code, and copies it to your clipboard:
 
 ```powershell
 cd E:\scanoff
-gh auth login
-.\scripts\finalize-mvp.ps1
+.\scripts\github-login.ps1
 ```
 
-Or just push: `.\scripts\publish-github.ps1`
+What happens:
+1. A code like `AB12-CD34` prints **in the PowerShell window**
+2. Your browser opens to https://github.com/login/device
+3. **Paste** that code into the browser (Ctrl+V) and click Authorize
+4. The script then pushes the repo and sets CI secrets automatically
 
-This creates **https://github.com/sulmanamazon25-ctrl/ReceiptVault**, pushes code, and enables Pages at:
-
-**https://sulmanamazon25-ctrl.github.io/ReceiptVault/**
-
-Optional CI signing secrets: see `DEPLOYMENT.md` (`scripts\encode-keystore.ps1` for base64).  
-`finalize-mvp.ps1` sets secrets automatically when `release.keystore` exists and `gh` is authenticated.
+Repo: **https://github.com/sulmanamazon25-ctrl/ReceiptVault**  
+Pages: **https://sulmanamazon25-ctrl.github.io/ReceiptVault/**
 
 ## Supabase (done)
 
