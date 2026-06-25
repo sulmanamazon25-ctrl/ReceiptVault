@@ -9,6 +9,7 @@ import com.receiptvault.app.domain.repository.FolderRepository
 import com.receiptvault.app.domain.repository.ReceiptRepository
 import com.receiptvault.app.domain.repository.SubscriptionRepository
 import com.receiptvault.app.pdf.ReportPdfExporter
+import com.receiptvault.app.scanner.session.ScanJobQueue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,8 +25,12 @@ class HomeViewModel @Inject constructor(
     receiptRepository: ReceiptRepository,
     folderRepository: FolderRepository,
     private val reportPdfExporter: ReportPdfExporter,
+    scanJobQueue: ScanJobQueue,
     subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
+
+    val scanJobsPending = scanJobQueue.jobs
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val allReceipts: StateFlow<List<Receipt>> = receiptRepository.observeReceipts()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())

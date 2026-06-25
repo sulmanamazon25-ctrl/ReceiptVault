@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.receiptvault.app.domain.model.Receipt
 import com.receiptvault.app.domain.repository.ReceiptRepository
 import com.receiptvault.app.domain.repository.SubscriptionRepository
-import com.receiptvault.app.pdf.ReceiptPdfExporter
+import com.receiptvault.app.export.DocumentExportHub
+import com.receiptvault.app.export.ExportFormat
 import com.receiptvault.app.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ import javax.inject.Inject
 class ReceiptDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val receiptRepository: ReceiptRepository,
-    private val pdfExporter: ReceiptPdfExporter,
+    private val exportHub: DocumentExportHub,
     subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
 
@@ -35,8 +36,11 @@ class ReceiptDetailViewModel @Inject constructor(
     val isPro: StateFlow<Boolean> = subscriptionRepository.observeIsPro()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), false)
 
-    private val _pdfUri = MutableStateFlow<Uri?>(null)
-    val pdfUri: StateFlow<Uri?> = _pdfUri.asStateFlow()
+    private val _exportUri = MutableStateFlow<Uri?>(null)
+    val exportUri: StateFlow<Uri?> = _exportUri.asStateFlow()
+
+    private val _exportError = MutableStateFlow<String?>(null)
+    val exportError: StateFlow<String?> = _exportError.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -51,19 +55,25 @@ class ReceiptDetailViewModel @Inject constructor(
         }
     }
 
-    fun exportPdf(isPro: Boolean, onNeedPro: () -> Unit) {
+    fun export(format: ExportFormat, saveToDownloads: Boolean, isPro: Boolean, onNeedPro: () -> Unit) {
         val receipt = _receipt.value ?: return
-        if (!isPro) {
+        val needsPro = format != ExportFormat.JPEG && format != ExportFormat.PNG
+        if (needsPro && !isPro) {
             onNeedPro()
             return
         }
         viewModelScope.launch {
-            pdfExporter.exportReceipt(receipt)
-                .onSuccess { _pdfUri.value = it }
+            exportHub.export(receipt, format, isPro, saveToDownloads)
+                .onSuccess { _exportUri.value = it }
+                .onFailure { _exportError.value = it.message }
         }
     }
 
-    fun clearPdfUri() {
-        _pdfUri.value = null
+    fun clearExportUri() {
+        _exportUri.value = null
+    }
+
+    fun clearExportError() {
+        _exportError.value = null
     }
 }

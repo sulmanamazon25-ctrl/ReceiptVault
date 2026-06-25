@@ -22,7 +22,7 @@ import com.receiptvault.app.data.database.entity.SubscriptionEntity
         SubscriptionEntity::class,
         LicenseCacheEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class ReceiptVaultDatabase : RoomDatabase() {

@@ -1,20 +1,42 @@
-# ReceiptVault User Guide (English)
+# ReceiptVault User Guide (English) — v3.1
 
 ## Install
 
-1. Download the APK from GitHub Actions (or install from Google Play when available).
+1. Download the APK from [GitHub Actions](https://github.com/sulmanamazon25-ctrl/ReceiptVault/actions) (v3.1.0-alpha).
 2. Enable **Install unknown apps** for your browser or file manager.
 3. Open the APK and tap **Install**.
 
 ---
 
-## Basic use (free)
+## Quick scan (v3.1)
 
-1. Tap **+** to add a receipt (title, merchant, amount, date, notes).
-2. Optional: tap **Take photo** to attach a receipt image.
-3. Use **Folders** (folder icon) to organize receipts.
-4. Use **Search** (magnifier) to find receipts by title.
-5. Tap a receipt to view, edit, or delete.
+- **Home screen widget** — tap to open the scanner and return to your previous app after save.
+- **Quick Settings tile** — add "ReceiptVault Scan" from the tile editor.
+- **App shortcuts** — long-press the app icon → Smart Scan or Batch Scan.
+- **Share into ReceiptVault** — share an image or PDF from any app → ReceiptVault.
+
+---
+
+## Smart Scan (v3)
+
+1. Tap the **camera FAB** on the home screen to open **Smart Scan**.
+2. Align your document inside the green frame.
+3. Tap the shutter (Pro: enable **Batch** to scan multiple documents in one session).
+4. Review detected fields on the **Review scan** screen — edit chips as needed.
+5. Tap **Save to vault**.
+
+**Document types:** Receipt, Bill, Invoice, Warranty, ID, Contract, Other.
+
+**Free tier:** Manual crop scan, title-only search, single-page saves.
+
+**Pro:** Auto-enhance, batch scan, search inside OCR text, smart folders, multi-page PDF.
+
+---
+
+## Manual entry (free)
+
+1. Tap the **pencil icon** on the home screen to add a document manually.
+2. Optional: attach a photo and tap **Scan receipt (Pro)** for OCR.
 
 ---
 
@@ -22,62 +44,53 @@
 
 ### Option A — License key (sideload / admin)
 
-1. Open **Settings** (gear icon).
-2. Tap **ReceiptVault Pro**.
-3. Enter your key (format `RV-XXXX-XXXX-XXXX`).
-4. Tap **Activate license**.
-
-Each key works on **one phone only**. Contact your admin for a new key if you change devices.
+1. **Settings** → **ReceiptVault Pro** → enter `RV-XXXX-XXXX-XXXX` → **Activate license**.
 
 ### Option B — Google Play subscription
 
-1. Install from Google Play.
-2. Open **Settings** → **ReceiptVault Pro**.
-3. Choose a plan and complete purchase.
-4. Use **Restore purchases** if you reinstall.
+Install from Play Store → **Settings** → **ReceiptVault Pro** → subscribe → **Restore purchases** if needed.
 
 ---
 
-## Pro features
+## Pro features (v3)
 
 | Feature | How to use |
 |---------|------------|
-| **OCR scan** | After taking a receipt photo, tap **Scan receipt (Pro)** to auto-fill amount and merchant |
-| **Export PDF** | Open a receipt → **Export PDF**; or Home menu → **Export report PDF** |
-| **Encrypted backup** | Settings → **Export encrypted backup**; restore via **Restore from backup** |
-
-Free users can still add receipts manually without Pro.
+| **Smart Scan enhance** | Automatic on capture when Pro is active |
+| **Batch scan** | Toggle **Batch** in Smart Scan → **Done** when finished |
+| **Search scanned text** | Search screen — matches title, merchant, OCR text |
+| **Smart folders** | Pro auto-files by document type when folders exist |
+| **Multi-page scan** | Review screen → **Add page** (Pro) |
+| **ID card (2-sided)** | Toggle **Mark as ID card** on review → scan front and back |
+| **Export formats** | Receipt detail → **Export document** → PDF, JPEG, PNG, TXT, ZIP (Pro) |
+| **Multi-page PDF** | Receipt detail → Export → PDF |
+| **Encrypted backup** | Settings → export / restore `.rvbak` |
 
 ---
 
-## Security settings
+## Security
 
-- **Biometric app lock** — require fingerprint/face when opening the app.
-- **Block screenshots** — hides receipts from screenshots and recent apps.
+- **Biometric app lock** — Settings
+- **Block screenshots** — recommended for ID/contract scans
+- **Sensitive documents** — ID and contract types show a warning; list hides amounts
 
 ---
 
 ## Privacy
 
-- Receipts and photos stay **on your device**.
-- The app works fully **offline** except license activation/check and opening Privacy/Terms links.
-- License activation sends a device identifier hash and your IP for fraud prevention.
+- All scans and OCR stay **on your device**.
+- No analytics or ads.
+- License check is the only routine network call.
 
 ---
 
-## Troubleshooting
+## Beta feedback (v3.1.0-alpha)
 
-| Problem | Fix |
-|---------|-----|
-| "Key already used on another device" | Ask admin to unbind old device or issue a new key |
-| "License validation required" | Connect to internet and reopen the app |
-| Play Billing unavailable | Install from Play Store, or use a license key |
-| Play Protect warning on install | Tap **More details** → **Install anyway** (sideload) |
-| OCR empty / wrong | Retake photo with good lighting; edit fields manually |
+Report issues via GitHub Issues or support@receiptvault.app. Include Android version and a description of the scan (lighting, document type).
 
 ---
 
 ## Legal
 
-- Privacy Policy and Terms: **Settings** → links open in browser.
-- Support: support@receiptvault.app
+- [Privacy Policy](https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/privacy.html)
+- [Terms](https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/terms.html)

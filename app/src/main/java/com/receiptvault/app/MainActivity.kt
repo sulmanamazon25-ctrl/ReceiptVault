@@ -23,6 +23,7 @@ import com.receiptvault.app.presentation.theme.ReceiptVaultTheme
 import com.receiptvault.app.security.BiometricAuthenticator
 import com.receiptvault.app.security.BiometricStatus
 import com.receiptvault.app.security.applyScreenshotProtection
+import com.receiptvault.app.scanner.session.BatchScanSession
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +45,9 @@ class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var licenseRepository: LicenseRepository
+
+    @Inject
+    lateinit var batchScanSession: BatchScanSession
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,7 +83,10 @@ class MainActivity : FragmentActivity() {
                         }
                     } else {
                         val navController = rememberNavController()
-                        AppNavHost(navController = navController)
+                        AppNavHost(
+                            navController = navController,
+                            batchScanSession = batchScanSession
+                        )
                     }
                 }
             }

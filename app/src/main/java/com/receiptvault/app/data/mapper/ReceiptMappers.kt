@@ -7,6 +7,7 @@ import com.receiptvault.app.data.database.entity.SubscriptionEntity
 import com.receiptvault.app.domain.model.EntitlementSource
 import com.receiptvault.app.domain.model.Folder
 import com.receiptvault.app.domain.model.LicenseEntitlement
+import com.receiptvault.app.domain.model.DocumentType
 import com.receiptvault.app.domain.model.PurchaseType
 import com.receiptvault.app.domain.model.Receipt
 import com.receiptvault.app.domain.model.Subscription
@@ -25,6 +26,13 @@ fun ReceiptEntity.toDomain(): Receipt = Receipt(
     folderId = folderId,
     imagePath = imagePath,
     pdfPath = pdfPath,
+    documentType = runCatching { DocumentType.valueOf(documentType) }
+        .getOrDefault(DocumentType.RECEIPT),
+    ocrText = ocrText,
+    scanConfidence = scanConfidence,
+    extraPagesJson = extraPagesJson,
+    parsedFieldsJson = parsedFieldsJson,
+    isSensitive = isSensitive,
     createdAt = createdAt,
     updatedAt = updatedAt
 )
@@ -41,6 +49,12 @@ fun Receipt.toEntity(): ReceiptEntity = ReceiptEntity(
     folderId = folderId,
     imagePath = imagePath,
     pdfPath = pdfPath,
+    documentType = documentType.name,
+    ocrText = ocrText,
+    scanConfidence = scanConfidence,
+    extraPagesJson = extraPagesJson,
+    parsedFieldsJson = parsedFieldsJson,
+    isSensitive = isSensitive,
     createdAt = createdAt,
     updatedAt = updatedAt
 )

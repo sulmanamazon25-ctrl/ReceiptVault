@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ReceiptVault vs Cloud Scanners — Privacy Comparison</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+    h1 { color: #0B6E4F; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #f5f5f5; }
+    a { color: #0B6E4F; }
+  </style>
+</head>
+<body>
+  <h1>Private scanner vs cloud scanners</h1>
+  <p>Many document scanner apps upload your receipts and IDs to the cloud by default. ReceiptVault v3 keeps every scan on your device.</p>
+  <table>
+    <tr><th></th><th>Typical cloud scanner</th><th>ReceiptVault</th></tr>
+    <tr><td>Account required</td><td>Often yes</td><td>No</td></tr>
+    <tr><td>Document upload</td><td>Default</td><td>Never</td></tr>
+    <tr><td>Encrypted local DB</td><td>Rare</td><td>SQLCipher + Keystore</td></tr>
+    <tr><td>Ads / analytics</td><td>Common</td><td>None</td></tr>
+    <tr><td>Smart Scan + OCR</td><td>Yes (cloud)</td><td>Yes (on-device)</td></tr>
+    <tr><td>Search scanned text</td><td>Cloud index</td><td>Local index (Pro)</td></tr>
+  </table>
+  <p><a href="https://github.com/sulmanamazon25-ctrl/ReceiptVault/actions">Download APK (GitHub Actions)</a></p>
+  <p><a href="index.html">Legal home</a></p>
+</body>
+</html>

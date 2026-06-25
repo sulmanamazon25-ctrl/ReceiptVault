@@ -25,4 +25,15 @@ object DatabaseMigrations {
             )
         }
     }
+
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE receipts ADD COLUMN documentType TEXT NOT NULL DEFAULT 'RECEIPT'")
+            db.execSQL("ALTER TABLE receipts ADD COLUMN ocrText TEXT")
+            db.execSQL("ALTER TABLE receipts ADD COLUMN scanConfidence REAL")
+            db.execSQL("ALTER TABLE receipts ADD COLUMN extraPagesJson TEXT")
+            db.execSQL("ALTER TABLE receipts ADD COLUMN parsedFieldsJson TEXT")
+            db.execSQL("ALTER TABLE receipts ADD COLUMN isSensitive INTEGER NOT NULL DEFAULT 0")
+        }
+    }
 }

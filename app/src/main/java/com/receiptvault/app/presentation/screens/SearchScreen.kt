@@ -32,10 +32,30 @@ import com.receiptvault.app.presentation.viewmodel.SearchViewModel
 fun SearchScreen(
     onNavigateBack: () -> Unit,
     onOpenReceipt: (Long) -> Unit,
+    onOpenSubscription: () -> Unit = {},
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val query by viewModel.query.collectAsStateWithLifecycle()
     val results by viewModel.results.collectAsStateWithLifecycle()
+    val isPro by viewModel.isPro.collectAsStateWithLifecycle()
+    val showReviewPrompt by viewModel.showReviewPrompt.collectAsStateWithLifecycle()
+
+    androidx.compose.runtime.LaunchedEffect(results.size, query) {
+        if (query.isNotBlank()) viewModel.onResultsDisplayed(results.size)
+    }
+
+    if (showReviewPrompt) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { viewModel.dismissReviewPrompt() },
+            title = { Text("Enjoying ReceiptVault?") },
+            text = { Text("Help others find a private scanner — rate us on Google Play.") },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { viewModel.dismissReviewPrompt() }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -57,7 +77,7 @@ fun SearchScreen(
             OutlinedTextField(
                 value = query,
                 onValueChange = viewModel::onQueryChange,
-                label = { Text("Search by title") },
+                label = { Text(if (isPro) "Search titles & scanned text" else "Search by title (Pro: full text)") },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()

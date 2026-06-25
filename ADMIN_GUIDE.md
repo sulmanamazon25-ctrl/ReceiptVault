@@ -137,6 +137,23 @@ Sideloaded APK users cannot use Play Billing; use license keys instead.
 
 ---
 
+## Launch pricing (v3.1 — Jun–Sep 2026)
+
+| Tier | Play launch (mo 1–3) | Play standard (mo 4+) | License key (20% off standard) |
+|------|----------------------|------------------------|--------------------------------|
+| Monthly | $1.99 | $2.99 | $2.39 |
+| Yearly | $11.99 | $19.99 | $15.99 |
+| Lifetime | $24.99 | $39.99 | **$31.99** |
+
+- **License rule:** sideload/APK keys are always **0.8 × Play standard** price.
+- **Launch promo ends:** 2026-09-24 (`BuildConfig.LAUNCH_PROMO_END`).
+- **Public pricing page:** [docs/pricing.html](docs/pricing.html) — host on Supabase Storage `legal/pricing.html`.
+- **Stripe (phase 2):** `supabase/functions/stripe-license` webhook → `admin-licenses` `create` action.
+
+For APK launch before Stripe: sell lifetime keys manually at **$31.99** via `scripts/generate-license.ps1`.
+
+---
+
 ## Support
 
 - Email: support@receiptvault.app

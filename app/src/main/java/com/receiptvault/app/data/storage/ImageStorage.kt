@@ -23,6 +23,8 @@ class ImageStorage @Inject constructor(
 
     fun createImageFile(): File = File(imagesDir, "receipt_${System.currentTimeMillis()}.jpg")
 
+    fun createScanFile(): File = File(imagesDir, "scan_${System.currentTimeMillis()}.jpg")
+
     fun uriForFile(file: File): Uri =
         FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
 

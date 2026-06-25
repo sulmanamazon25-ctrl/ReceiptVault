@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ReceiptVault</string>
+    <string name="shortcut_smart_scan">Smart Scan</string>
+    <string name="shortcut_smart_scan_long">Scan document now</string>
+    <string name="shortcut_batch_scan">Batch scan</string>
+    <string name="shortcut_batch_scan_long">Batch scan documents</string>
+    <string name="widget_scan_description">Quick Smart Scan</string>
+    <string name="tile_scan_label">Scan document</string>
 </resources>

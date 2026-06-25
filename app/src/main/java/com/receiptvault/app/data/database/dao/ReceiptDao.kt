@@ -37,6 +37,29 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipts WHERE title LIKE '%' || :query || '%' ORDER BY date DESC")
     fun searchByTitle(query: String): Flow<List<ReceiptEntity>>
 
+    @Query(
+        """
+        SELECT * FROM receipts
+        WHERE title LIKE '%' || :query || '%'
+           OR ocrText LIKE '%' || :query || '%'
+           OR merchantName LIKE '%' || :query || '%'
+           OR notes LIKE '%' || :query || '%'
+        ORDER BY date DESC
+        """
+    )
+    fun searchFullText(query: String): Flow<List<ReceiptEntity>>
+
+    @Query(
+        """
+        SELECT * FROM receipts
+        WHERE amount IS NOT NULL AND ABS(amount - :amount) < 0.01
+        AND ABS(date - :date) < :dateTolerance
+        AND id != :excludeId
+        LIMIT 5
+        """
+    )
+    suspend fun findSimilar(amount: Double, date: Long, dateTolerance: Long, excludeId: Long): List<ReceiptEntity>
+
     @Query("SELECT * FROM receipts WHERE date BETWEEN :start AND :end ORDER BY date DESC")
     fun searchByDateRange(start: Long, end: Long): Flow<List<ReceiptEntity>>
 

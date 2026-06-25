@@ -68,8 +68,11 @@ fun ReceiptRow(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                val secondary = receipt.merchantName?.takeIf { it.isNotBlank() }
-                    ?: Formatters.formatDate(receipt.date)
+                val secondary = buildString {
+                    append(receipt.documentType.displayName)
+                    receipt.merchantName?.takeIf { it.isNotBlank() }?.let { append(" · $it") }
+                        ?: append(" · ${Formatters.formatDate(receipt.date)}")
+                }
                 Text(
                     text = secondary,
                     style = MaterialTheme.typography.bodyMedium,
@@ -78,11 +81,19 @@ fun ReceiptRow(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Text(
-                text = Formatters.formatCurrency(receipt.amount),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
-            )
+            if (!receipt.isSensitive) {
+                Text(
+                    text = Formatters.formatCurrency(receipt.amount),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+            } else {
+                Text(
+                    text = "Sensitive",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
     }
 }

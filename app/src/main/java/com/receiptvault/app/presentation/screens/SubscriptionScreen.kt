@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.billingclient.api.ProductDetails
+import com.receiptvault.app.BuildConfig
 import com.receiptvault.app.billing.BillingConnectionState
 import com.receiptvault.app.presentation.viewmodel.SubscriptionViewModel
 
@@ -81,12 +82,28 @@ fun SubscriptionScreen(
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
-            ProFeature("On-device OCR to auto-fill amounts and merchants")
+            ProFeature("Smart Scan with live frame & auto-enhance")
+            ProFeature("On-device OCR with confidence chips")
+            ProFeature("Batch scan sessions")
+            ProFeature("Search inside scanned text (FTS)")
+            ProFeature("Multi-page PDF export")
+            ProFeature("Smart folder routing by document type")
             ProFeature("Export receipts and reports to PDF")
             ProFeature("Unlimited folders")
             ProFeature("Encrypted local backups")
 
             if (!isPro) {
+                HorizontalDivider()
+                Text(
+                    text = "Launch pricing until ${BuildConfig.LAUNCH_PROMO_END}: Monthly ${BuildConfig.PRICE_MONTHLY_LAUNCH}, Yearly ${BuildConfig.PRICE_YEARLY_LAUNCH}, Lifetime ${BuildConfig.PRICE_LIFETIME_LAUNCH}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "License keys (sideload): ${BuildConfig.PRICE_LIFETIME_LICENSE} lifetime — 20% off Play standard.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 HorizontalDivider()
                 Text("License key", style = MaterialTheme.typography.titleMedium)
                 Text(

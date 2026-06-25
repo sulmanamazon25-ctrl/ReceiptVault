@@ -13,6 +13,8 @@ interface ReceiptRepository {
     suspend fun deleteReceipt(receipt: Receipt)
     suspend fun deleteReceiptById(id: Long)
     fun searchByTitle(query: String): Flow<List<Receipt>>
+    fun searchFullText(query: String): Flow<List<Receipt>>
+    suspend fun findSimilarReceipts(amount: Double, date: Long, excludeId: Long): List<Receipt>
     fun searchByDateRange(start: Long, end: Long): Flow<List<Receipt>>
     suspend fun count(): Int
     suspend fun totalAmount(): Double

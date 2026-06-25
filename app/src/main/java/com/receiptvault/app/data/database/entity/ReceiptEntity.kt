@@ -38,6 +38,12 @@ data class ReceiptEntity(
     val folderId: Long?,
     val imagePath: String?,
     val pdfPath: String?,
+    val documentType: String = "RECEIPT",
+    val ocrText: String? = null,
+    val scanConfidence: Float? = null,
+    val extraPagesJson: String? = null,
+    val parsedFieldsJson: String? = null,
+    val isSensitive: Boolean = false,
     val createdAt: Long,
     val updatedAt: Long
 )

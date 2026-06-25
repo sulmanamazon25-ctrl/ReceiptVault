@@ -21,57 +21,59 @@ class ReceiptPdfExporter @Inject constructor(
 ) {
     fun exportReceipt(receipt: Receipt): Result<Uri> = runCatching {
         val document = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-        val page = document.startPage(pageInfo)
-        val canvas = page.canvas
-        val titlePaint = Paint().apply { textSize = 20f; isFakeBoldText = true }
-        val bodyPaint = Paint().apply { textSize = 14f }
-        var y = 48f
+        val allImages = receipt.allImagePaths().filter { File(it).exists() }
+        val images = if (allImages.isEmpty()) listOfNotNull(receipt.imagePath) else allImages
 
-        canvas.drawText(receipt.title, 48f, y, titlePaint)
-        y += 28f
-        receipt.merchantName?.let {
-            canvas.drawText("Merchant: $it", 48f, y, bodyPaint)
-            y += 22f
-        }
-        receipt.amount?.let {
-            canvas.drawText("Amount: ${Formatters.formatCurrency(it)}", 48f, y, bodyPaint)
-            y += 22f
-        }
-        receipt.taxAmount?.let {
-            canvas.drawText("Tax: ${Formatters.formatCurrency(it)}", 48f, y, bodyPaint)
-            y += 22f
-        }
-        canvas.drawText("Date: ${Formatters.formatDate(receipt.date)}", 48f, y, bodyPaint)
-        y += 22f
-        receipt.category?.let {
-            canvas.drawText("Category: $it", 48f, y, bodyPaint)
-            y += 22f
-        }
-        receipt.notes?.let {
-            canvas.drawText("Notes: $it", 48f, y, bodyPaint)
-            y += 22f
-        }
+        images.forEachIndexed { index, path ->
+            val pageNum = index + 1
+            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, pageNum).create()
+            val page = document.startPage(pageInfo)
+            val canvas = page.canvas
+            val titlePaint = Paint().apply { textSize = 20f; isFakeBoldText = true }
+            val bodyPaint = Paint().apply { textSize = 14f }
+            var y = 48f
 
-        receipt.imagePath?.let { path ->
+            if (index == 0) {
+                canvas.drawText(receipt.title, 48f, y, titlePaint)
+                y += 28f
+                receipt.merchantName?.let {
+                    canvas.drawText("Merchant: $it", 48f, y, bodyPaint)
+                    y += 22f
+                }
+                receipt.amount?.let {
+                    canvas.drawText("Amount: ${Formatters.formatCurrency(it)}", 48f, y, bodyPaint)
+                    y += 22f
+                }
+                canvas.drawText("Date: ${Formatters.formatDate(receipt.date)}", 48f, y, bodyPaint)
+                y += 28f
+            } else {
+                canvas.drawText("${receipt.title} — page ${index + 1}", 48f, y, titlePaint)
+                y += 28f
+            }
+
             val bitmap = BitmapFactory.decodeFile(path)
             if (bitmap != null) {
                 val maxW = 500f
                 val scale = maxW / bitmap.width
                 val h = bitmap.height * scale
-                if (y + h < 800f) {
-                    canvas.drawBitmap(
-                        bitmap,
-                        null,
-                        android.graphics.RectF(48f, y, 48f + maxW, y + h),
-                        null
-                    )
-                }
+                canvas.drawBitmap(
+                    bitmap,
+                    null,
+                    android.graphics.RectF(48f, y, 48f + maxW, y + h.coerceAtMost(700f - y)),
+                    null
+                )
                 bitmap.recycle()
             }
+            document.finishPage(page)
         }
 
-        document.finishPage(page)
+        if (images.isEmpty()) {
+            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+            val page = document.startPage(pageInfo)
+            page.canvas.drawText(receipt.title, 48f, 48f, Paint().apply { textSize = 20f })
+            document.finishPage(page)
+        }
+
         val outFile = File(context.cacheDir, "receipt_${receipt.id}.pdf")
         FileOutputStream(outFile).use { document.writeTo(it) }
         document.close()

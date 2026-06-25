@@ -11,7 +11,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -45,6 +46,7 @@ import com.receiptvault.app.presentation.viewmodel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onSmartScan: () -> Unit,
     onAddReceipt: () -> Unit,
     onOpenReceipt: (Long) -> Unit,
     onOpenFolders: () -> Unit,
@@ -55,6 +57,10 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current
     val receipts by viewModel.receipts.collectAsStateWithLifecycle()
+    val scanJobs by viewModel.scanJobsPending.collectAsStateWithLifecycle()
+    val pendingScans = scanJobs.count {
+        it.status.name == "QUEUED" || it.status.name == "PROCESSING"
+    }
     val folders by viewModel.folders.collectAsStateWithLifecycle()
     val selectedFolderId by viewModel.selectedFolderId.collectAsStateWithLifecycle()
     val isPro by viewModel.isPro.collectAsStateWithLifecycle()
@@ -79,6 +85,9 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("ReceiptVault") },
                 actions = {
+                    IconButton(onClick = onAddReceipt) {
+                        Icon(Icons.Filled.Edit, contentDescription = "Add manually")
+                    }
                     IconButton(onClick = {
                         viewModel.exportReport(isPro) { onOpenSubscription() }
                     }) {
@@ -97,8 +106,8 @@ fun HomeScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddReceipt) {
-                Icon(Icons.Filled.Add, contentDescription = "Add receipt")
+            FloatingActionButton(onClick = onSmartScan) {
+                Icon(Icons.Filled.CameraAlt, contentDescription = "Smart Scan")
             }
         }
     ) { innerPadding: PaddingValues ->
@@ -110,11 +119,20 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "${receipts.size} receipts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Column {
+                    Text(
+                        text = "${receipts.size} documents",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    if (pendingScans > 0) {
+                        Text(
+                            text = "Processing $pendingScans scan(s)…",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
                 Text(
                     text = "Total: ${Formatters.formatCurrency(total)}",
                     style = MaterialTheme.typography.titleMedium,
@@ -146,7 +164,7 @@ fun HomeScreen(
             }
 
             if (receipts.isEmpty()) {
-                EmptyState(message = "No receipts yet. Tap + to capture your first one.")
+                EmptyState(message = "No documents yet. Tap the camera to Smart Scan.")
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),

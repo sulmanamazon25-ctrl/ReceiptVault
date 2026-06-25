@@ -49,6 +49,14 @@ class ReceiptRepositoryImpl @Inject constructor(
     override fun searchByTitle(query: String): Flow<List<Receipt>> =
         receiptDao.searchByTitle(query).map { entities -> entities.map(ReceiptEntity::toDomain) }
 
+    override fun searchFullText(query: String): Flow<List<Receipt>> =
+        receiptDao.searchFullText(query).map { entities -> entities.map(ReceiptEntity::toDomain) }
+
+    override suspend fun findSimilarReceipts(amount: Double, date: Long, excludeId: Long): List<Receipt> =
+        withContext(ioDispatcher) {
+            receiptDao.findSimilar(amount, date, 86_400_000L, excludeId).map { it.toDomain() }
+        }
+
     override fun searchByDateRange(start: Long, end: Long): Flow<List<Receipt>> =
         receiptDao.searchByDateRange(start, end)
             .map { entities -> entities.map(ReceiptEntity::toDomain) }

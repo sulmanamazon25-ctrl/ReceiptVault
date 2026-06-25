@@ -16,8 +16,8 @@ android {
         applicationId = "com.receiptvault.app"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "2.0.0"
+        versionCode = 4
+        versionName = "3.1.0-alpha"
 
         buildConfigField("String", "SUPABASE_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co\"")
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrZnlicXd0YmFlY3FmbnpjcXZhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNTY4NTAsImV4cCI6MjA5NzgzMjg1MH0.2s7clZwzMDL7gJhlQjVNoBu1v2zDTUVJXGqqpV8gxK4\"")
@@ -34,6 +34,12 @@ android {
         buildConfigField("String", "PRIVACY_POLICY_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/privacy.html\"")
         buildConfigField("String", "TERMS_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/terms.html\"")
         buildConfigField("String", "SUPPORT_EMAIL", "\"support@receiptvault.app\"")
+        buildConfigField("String", "LAUNCH_PROMO_END", "\"2026-09-24\"")
+        buildConfigField("String", "LICENSE_STORE_URL", "\"https://bkfybqwtbaecqfnzcqva.supabase.co/storage/v1/object/public/legal/pricing.html\"")
+        buildConfigField("String", "PRICE_MONTHLY_LAUNCH", "\"$1.99\"")
+        buildConfigField("String", "PRICE_YEARLY_LAUNCH", "\"$11.99\"")
+        buildConfigField("String", "PRICE_LIFETIME_LAUNCH", "\"$24.99\"")
+        buildConfigField("String", "PRICE_LIFETIME_LICENSE", "\"$31.99\"")
     }
 
     signingConfigs {
@@ -137,6 +143,12 @@ dependencies {
 
     // Pro: OCR
     implementation(libs.mlkit.text.recognition)
+
+    // Smart Scan (CameraX)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
 
     // License token cache
     implementation(libs.androidx.security.crypto)

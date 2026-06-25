@@ -56,7 +56,7 @@ $response = Invoke-RestMethod -Uri $url -Method Post -Headers $headers -Body $bo
 
 Write-Host ""
 Write-Host "=== License key created ===" -ForegroundColor Green
-Write-Host "Key (save now — shown once): $($response.license_key)" -ForegroundColor Yellow
+Write-Host "Key (save now - shown once): $($response.license_key)" -ForegroundColor Yellow
 Write-Host "Key ID: $($response.key_id)"
 Write-Host "Tier: $($response.tier)"
 Write-Host "Max devices: $($response.max_devices)"
